@@ -1,6 +1,8 @@
 # Azure Database Migration
 
 # Project Description
+The goal of this project was to migrate a local SQL database to the cloud using an Azure SQL Database. The local database was hosted on an SQL server on a virutal machine (VM).
+The AdventureWorks sample database created by Microsoft was used for the purposes of this project.
 This project was split into 7 milestones. After each milestone, any relevant files were uploaded to this repository and this README was updated to document my progress.
 
 ## Milestone 1: Set up the Environment
@@ -13,6 +15,7 @@ In this milestone, I provisioned a Windows Virtual Machine (VM) which was the co
 - After this, I created the company's database by restoring from a .bak backup file.
 
 ## Milestone 3: Migrate to Azure SQL Database
+In this milestone, I deployed an Azure SQL database with a corresponding server and resource group in my Azure subscription. I then added a firewall rule to the server to allow my computer and the VM to connect to it.
 
 ## Milestone 4: Data Backup and Restore
 
