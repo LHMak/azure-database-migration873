@@ -15,7 +15,17 @@ In this milestone, I provisioned a Windows Virtual Machine (VM) which was the co
 - After this, I created the company's database by restoring from a .bak backup file.
 
 ## Milestone 3: Migrate to Azure SQL Database
-In this milestone, I deployed an Azure SQL database with a corresponding server and resource group in my Azure subscription. I then added a firewall rule to the server to allow my computer and the VM to connect to it.
+In this milestone, I transitioned a local database to an Azure SQL database. I achieved this by provisioning an SQL server and the target Azure SQL Database using SQL login as the authentication method:
+
+<img width="469" alt="m3-1 deploy database" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/65006a6d-44a5-4941-8cd3-cdeba8eaf4f8">
+
+_Image showing successful deployment of database_
+
+I then allowed public network access to the server. This would allow my local PC and the source VM to connect to the database. I validated this by connecting to the database in VS Code on my local PC:
+
+<img width="280" alt="m3-1 vs code connected" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/1018ae27-605c-4608-9763-a7e41aaba423">
+
+_Image showing successful connection to the Azure SQL database in VS Code_
 
 ## Milestone 4: Data Backup and Restore
 
