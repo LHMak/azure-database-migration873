@@ -77,7 +77,7 @@ The migration process was made rather simple using this extension, as it used a 
 
 _Image showing the Azure SQL Migration wizard_
 
-
+### Problem
 Once I hit step 4 of the wizard I encountered my first issue of the project:
 
 <img width="470" alt="m3-5 Data migration issue" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/7726fa65-fc5e-484f-8be6-496a1556e9fe">
@@ -88,8 +88,22 @@ From the screenshot you can see that the wizard asks the user to select items fr
 
 This was due to the fact my Azure account contained two directories- one personal directory, used for learning the Azure platform; another for this migration project. The wizard only allowed me to select the resource group and server from my personal directory and not those from the migration project directory.
 
+### Solution
+After taking multiple approaches to fixing this issue such as assigning my account various different permissions, reinstalling ADS and manually inputting the resource group and server I intended to choose, I found a solution. 
 
+I deleted my personal directory so that only the migration project directory existed on my account. This ensured that ADS could only 'see' the resource group relating the my project's directory and so, I was able to successfully connect to the target Azure database: 
 
+<img width="470" alt="m3-5 Data migration issue solved" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/047624a1-7e51-4d45-9d67-004310a4d30b">
+
+_Image showing successful connection to target Azure database in the Azure SQL Migration wizard_
+
+Once this issue had been resolved, I was able to continue to the next step of the wizard. This step instructed me to install Microsoft Integration Runtime Configuration Manager on the VM and supply it with an authentication key from ADS. This handles connectivity between the local (source) database and the target Azure database. 
+
+After continuing through the remaining steps, I was able to begin the migration process and after waiting a few minutes, the migration was complete:
+
+<img width="784" alt="m3-5 Data migration complete" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/e2664f5f-4046-425f-9c6f-b31843846958">
+
+_Image showing the compelted database migration_
 
 ## Milestone 4: Data Backup and Restore
 
