@@ -9,7 +9,7 @@ This project was split into 7 milestones. After each milestone, any relevant fil
 In this milestone, this GitHub repo was created and I set up my account on Azure.
 
 ## Milestone 2: Set up the Production Environment
-In this milestone, I provisioned a Windows Virtual Machine (VM) which was the cornerstone of my production environment. This VM hosted the company's database (AdventureWorks sample database), serving as a secure, dedicated storage solution. SQL Server and Server Management Studio (SSMS) was installed on this VM to manage the database. 
+In this milestone, I provisioned a Windows VM which would be treated as my production environent. This VM hosted the company's database (AdventureWorks sample database), serving as a secure, dedicated storage solution. SQL Server and Server Management Studio (SSMS) was installed on this VM to manage the database. 
 - I provisioned a Windows 11 pro VM using the Standard B2ms storage size. This size is good for many workloads and so will be sufficient for this project.
 - I connected securely to the newly created VM using the RDP protocol and installed SQL Server and SSMS
 - After this, I created the company's database by restoring from a .bak backup file of the AdventureWorks sample database.
