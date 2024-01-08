@@ -202,6 +202,21 @@ When executing the maintenance plan, the following error occurred, which at firs
 
 _Image showing the error I encountered when executing the weekly backup maintenance plan_
 
+Upon inspecting the SQL Server Agent job history, I found the following log from the time I executed the plan. The error message contained this line: “Exception Message: The remote server returned an error: (404) Not Found.”
+
+<img width="605" alt="m4-4 maintenance plan wizard7" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/189530ca-b292-4a83-8363-fa547e04831f">
+
+_Image showing the error log from the SQL Server Agent job history._
+
+#### Solution
+I inferred from this error message that the location I had set to store the back ups could not be found. I recalled that when creating the maintenance plan, I decided to separate production and development environment back ups in separate containers. Therefore, when I configured the ‘Destination’ options, I input a new Azure storage container name (dev-db-backups).
+This container had not been created yet and so, I created this container manually (with container-level permissions) then tried executing the plan again. This time it was a success:
+
+<img width="613" alt="m4-4 maintenance plan wizard8" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/38ba83c2-b7b1-4902-900c-ba577f9d992e">
+
+_Image showing a successful execution of the weekly back up maintenance plan._
+
+I confirmed it worked by logging into my Azure account and navigating to the Azure Blob Storage container. I could see a back up file had been created and stored in the container, proving that the issue was now solved.
 
 ## Milestone 5: Disaster Recovery Simulation
 
