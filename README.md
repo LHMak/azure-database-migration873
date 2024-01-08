@@ -9,25 +9,31 @@ This project was split into 7 milestones. After each milestone, any relevant fil
 In this milestone, this GitHub repo was created and I set up my account on Azure.
 
 ## Milestone 2: Set up the Production Environment
-In this milestone, I provisioned a Windows VM which would be treated as my production environent. This VM hosted the company's database (AdventureWorks sample database), serving as a secure, dedicated storage solution. SQL Server and Server Management Studio (SSMS) was installed on this VM to manage the database. 
+In this milestone, I provisioned a Windows VM which would be treated as my production environent. This production VM hosted the company's database (AdventureWorks sample database), serving as a secure, dedicated storage solution. SQL Server and Server Management Studio (SSMS) was installed on this VM to manage the database. 
 - I provisioned a Windows 11 pro VM using the Standard B2ms storage size. This size is good for many workloads and so will be sufficient for this project.
 - I connected securely to the newly created VM using the RDP protocol and installed SQL Server and SSMS
 - After this, I created the company's database by restoring from a .bak backup file of the AdventureWorks sample database.
 
 ## Milestone 3: Migrate to Azure SQL Database
-In this milestone, I transitioned a local database to an Azure SQL database. I achieved this by provisioning an SQL server and the target Azure SQL Database using SQL login as the authentication method:
+The focus of this milestone was to transition the on-premise database (source), which was stored on the production environent, to the Azure ecosystem. This was achieved by using Azure Data Studio to perform the database migration.
+
+### Set Up Azure SQL Database
+
+I began this part of the project by by provisioning an SQL server and a corresponding Azure SQL Database. This database would be the target of the migration. The server used SQL login as it's authentication method:
 
 <img width="469" alt="m3-1 deploy database" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/65006a6d-44a5-4941-8cd3-cdeba8eaf4f8">
 
 _Image showing successful deployment of database_
 
-I then allowed public network access to the server. This would allow my local PC and the source VM to connect to the database. I validated this by connecting to the database in VS Code on my local PC:
+I then allowed public network access to the server. This would allow my local PC and the production VM to connect to the database. I validated this by connecting to the database in VS Code on my local PC:
 
 <img width="280" alt="m3-1 vs code connected" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/1018ae27-605c-4608-9763-a7e41aaba423">
 
 _Image showing successful connection to the Azure SQL database in VS Code_
 
-After this, I installed Azure Data Studio (ADS) on the VM hosting the local database and connected ADS to the database:
+### Prepare for Migration
+
+After this, I installed Azure Data Studio (ADS) on the production VM hosting the local database and connected ADS to the database:
 
 <img width="349" alt="m3-2 connect ADS to local db" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/ebfd82ec-3742-4d19-8a72-bdec17a0b2b0">
 
@@ -39,11 +45,9 @@ Similarly, I connected ADS to the target Azure SQL database:
 
 _Image from VM showing an active connection between ADS and the target Azure SQL database_
 
-**At this point, everything was ready to begin the database migration**
+### Schema Migration
 
-There were two stages to the migration, utilising two extensions for ADS- these were "SQL Server Schema Compare" and "Azure SQL Migration"
-
-**Stage 1: Schema Compare**
+At this point, everything was ready to begin the database migration. The migration was split into two stages, each utilising an extension for ADS- these were "SQL Server Schema Compare" and "Azure SQL Migration"
 
 SQL Server Schema Compare was used to compare and migrate the schemas of the local database to the target Azure database. This was to simmplify and streamline the migration process: 
 
@@ -57,13 +61,13 @@ Once the schema comparison had completed, I was then able to apply all the chang
 
 _Image showing the application of schema changes from local database to target Azure database_
 
-After this, you can see the target Azure database now contains the same tables as the local database (though they currently don't contain any data):
+After this, the target Azure database contained the same tables as the local database (though at this point they currently contianed no data):
 
 <img width="331" alt="m3-4 Schema migration complete" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/650ae791-f6fb-401f-a2f3-86018943c7b7">
 
 _Image showing successful migration of schema from local database to target Azure database_
 
-**Stage 2: Data Migration**
+### Data Migration
 
 Azure SQL Migration was use to migrate the data to the target Azure database:
 
@@ -77,7 +81,7 @@ The migration process was made rather simple using this extension, as it used a 
 
 _Image showing the Azure SQL Migration wizard_
 
-### Problem
+#### Problem
 Once I hit step 4 of the wizard I encountered my first issue of the project:
 
 <img width="470" alt="m3-5 Data migration issue" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/7726fa65-fc5e-484f-8be6-496a1556e9fe">
@@ -88,7 +92,7 @@ From the screenshot you can see that the wizard asks the user to select items fr
 
 This was due to the fact my Azure account contained two directories- one personal directory, used for learning the Azure platform; another for this migration project. The wizard only allowed me to select the resource group and server from my personal directory and not those from the migration project directory.
 
-### Solution
+#### Solution
 After taking multiple approaches to fixing this issue such as assigning my account various different permissions, reinstalling ADS and manually inputting the resource group and server I intended to choose, I found a solution. 
 
 I deleted my personal directory so that only the migration project directory existed on my account. This ensured that ADS could only 'see' the resource group relating the my project's directory and so, I was able to successfully connect to the target Azure database: 
@@ -106,6 +110,15 @@ After continuing through the remaining steps, I was able to begin the migration 
 _Image showing the compelted database migration_
 
 ## Milestone 4: Data Backup and Restore
+In this milestone, I focused on ensuring the data stored in the production environment database was stored securely on Azure. I then created a development environment which could be used for developing and testing new features, etc. Finally, I set up an automated backup routine for the development environment to safeguard any ongoing work in case of errors with testing and development.
+
+### Backup the On-Premise Database
+
+### Upload Backup to Blob Storage
+
+### Restore Database on Development Environment
+
+### Automate Backups for Development Database
 
 
 ## Milestone 5: Disaster Recovery Simulation
