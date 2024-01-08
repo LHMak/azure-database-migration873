@@ -12,7 +12,7 @@ In this milestone, this GitHub repo was created and I set up my account on Azure
 In this milestone, I provisioned a Windows VM which would be treated as my production environent. This production VM hosted the company's database (AdventureWorks sample database), serving as a secure, dedicated storage solution. SQL Server and Server Management Studio (SSMS) was installed on this VM to manage the database. 
 - I provisioned a Windows 11 pro VM using the Standard B2ms storage size. This size is good for many workloads and so will be sufficient for this project.
 - I connected securely to the newly created VM using the RDP protocol and installed SQL Server and SSMS
-- After this, I created the company's database by restoring from a .bak backup file of the AdventureWorks sample database.
+- After this, I created the company's database by restoring from a .bak back up file of the AdventureWorks sample database.
 
 ## Milestone 3: Migrate to Azure SQL Database
 The focus of this milestone was to transition the on-premise database (source), which was stored on the production environent, to the Azure ecosystem. This was achieved by using Azure Data Studio to perform the database migration.
@@ -109,16 +109,98 @@ After continuing through the remaining steps, I was able to begin the migration 
 
 _Image showing the compelted database migration_
 
-## Milestone 4: Data Backup and Restore
-In this milestone, I focused on ensuring the data stored in the production environment database was stored securely on Azure. I then created a development environment which could be used for developing and testing new features, etc. Finally, I set up an automated backup routine for the development environment to safeguard any ongoing work in case of errors with testing and development.
+## Milestone 4: Data Back up and Restore
+In this milestone, I focused on ensuring the data stored in the production environment database was stored securely on Azure. I then created a development environment which could be used for developing and testing new features, etc. Finally, I set up an automated back up routine for the development environment to safeguard any ongoing work in case of errors with testing and development.
 
-### Backup the On-Premise Database
+### Back up the On-Premise Database
+I began this milestone of project by backing up the database hosted in the production environent. I connected to the production VM and used SSMS to take a back up of the the database. When configuring the back up, I chose a Full back up so that I could clone the database once I created a development environment.
 
-### Upload Backup to Blob Storage
+<img width="584" alt="m4-2 creating backup" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/6c75876b-f152-4273-9c34-24aeb731bf7c">
+
+_Image showing back up configuration in SSMS_
+
+### Upload Back up to Blob Storage
+I then created an Azure storage account to serve as a secure cloud repository for database back ups. Once this was deployed, I then created a Blob Storage container to store the back up file I had created. I gave it the 'Container' access level, as this would allow anonymous connections (i.e. production VM and development VM) to connect to it and upload files.
+
+<img width="744" alt="m4-3 deployed container" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/a363e304-24eb-411e-b197-f430c21d6f33">
+
+_Image showing the deployed Azure Blob Storage container where the production database back up will be stored_
+
+I then stored the back up file of the database.
+
+<img width="915" alt="m4-3 backup file saved" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/122adc76-085b-427c-8e95-f8d1b90b926c">
+
+_Image showing the production database back up file is stored in the Azure Blob Storage container_
 
 ### Restore Database on Development Environment
+Next, I provisioned another VM to serve as the development enironment. This development VM was configured in the same way as the production VM (e.g. Windows 11 Pro, SQL Server and SSMS installed).
 
-### Automate Backups for Development Database
+I downloaded the back up file I stored in the Azure Blob Storage container and restored the database on this new development environemnt in SSMS. I did this using the 'Restore Database' feature:
+
+<img width="659" alt="m4-3 database restored" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/90f292be-04cc-4a0f-b6ba-11b7c1cc4252">
+
+_Image showing successful restoration of the production database from the stored back up file_
+
+With this, the development environment had a complete clone of the database hosted in the production environment. This clone could be used for any kind of development purpose, such as testing new features without any worry of affecting the live production database.
+
+### Automate Back ups for Development Database
+To ensure consistent protection of the development database, which could in theory be ever changing and evolving, an automated back up routine was set up. This would allow the development database to be restored to a recent point in time in case of an error.
+
+SQL Server Agent was started to enable scheduling and management of periodic backups.
+
+<img width="783" alt="m4-4 start sql server agent" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/d79b8767-8a4c-4bcb-9ff6-d967d3dbe257">
+
+_Image showing the SQL Server Agent being started_
+
+I then created an SQL Server Credential in SSMS to allow SQL Server to connect to the Azure Blob Storage container I created for back ups. This would allow SSMS on the development VM to store back ups to the Azure blob.
+To create the credential, I ran a T-SQL query on the server in SSMS. The query took the following format:
+
+<img width="903" alt="m4-4 sql server credential" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/65925ed3-da59-453a-b98c-2ac253ebee3e">
+
+_Image showing the T-SQL query used to create the SQL Server Credential_
+
+I replaced the items in squared brackets ( [] ) with a name for the credential and the storage account name respectively. I then acquired the access key from the ‘Access Keys’ page of the Azure storage account. Then I ran the query, creating the credential.
+
+<img width="558" alt="m4-4 sql server credential created" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/d9a3bc1e-e956-491f-85e9-9f0de47c10fc">
+
+_Image showing the newly created credential_
+
+After this, I began creating the maintenance plan using the Maintenance Plan Wizard:
+
+<img width="568" alt="m4-4 maintenance plan wizard" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/438dc66c-1077-4d68-911f-56506ac2fcbf">
+
+_Image showing the SQL Server Maintenance Plan Wizard_
+
+I set the maintenance plan to occur weekly, every Sunday at 12:00:00 AM:
+
+<img width="625" alt="m4-4 maintenance plan wizard2" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/95f1a673-80e8-4d92-9472-cde9d3dea07a">
+
+_Image showing the configuration of the maintenance plan schedule_
+
+When selecting which tasks this maintenance plan should perform, I chose Full back ups rather than differential or transactional back ups. I decided to choose Full back ups as it would allow point-in-time recovery in case of corruption or data loss. With this being a development environment, I thought these scenarios could be quite likely.
+
+<img width="618" alt="m4-4 maintenance plan wizard3" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/41fedbd0-120a-4d8e-af37-0d5d5e219bb3">
+
+_Image showing the selection of a Full database back up as a task in the maintenance plan_
+
+I set ‘URL’ as the ‘back up to’ option and then configured the ‘Destination’ settings. This involved selecting the credential I created earlier and providing the name of the Azure storage container for the back ups to be stored in. For ease, I set it to create a new container for these back ups. This would mean I had two containers in the storage account: one for the back up I created earlier (production environment) and a new container for weekly back ups from the development environment.
+
+<img width="610" alt="m4-4 maintenance plan wizard4" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/5f8a4b78-787b-4e62-9106-9098b80c76ef">
+
+_Image showing 'URL' being selected is the 'back up to' option in the Maintenance Plan wizard_
+
+<img width="596" alt="m4-4 maintenance plan wizard5" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/c902312f-46af-4701-a4fc-898b2a1339db">
+
+_Image showing the configured 'Destination' settings in the wizard. The credential and name of the new Azure storage container are supplied here._
+
+I then continued through the wizard to create the maintenance plan. To assess whether the new maintenance plan worked, I tried executing it and ran into an error
+
+#### Problem
+When executing the maintenance plan, the following error occurred, which at first seems vague. The error message suggested inspecting the SQL Server Agent job history for details.
+
+<img width="713" alt="m4-4 maintenance plan wizard6" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/670ecf5f-2b24-4fd7-9756-5e7bdaf051d5">
+
+_Image showing the error I encountered when executing the weekly backup maintenance plan_
 
 
 ## Milestone 5: Disaster Recovery Simulation
