@@ -279,6 +279,25 @@ I decided to redeploy the restored database and eventually it succeded:
 
 _Image showing successful deployment of the restored database_
 
+Once the restored production database was deployed, I connected to it in ADS on the production VM. This meant there were two connections to the Azure SQL server in ADS: one for the original, now corrupted database and the other for the restored database from before the data loss:
+
+<img width="466" alt="m5-2 connect to restored database" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/34bd64d3-1511-4710-b96c-0790e3f00de4">
+
+_Image showing me connecting to the restored Azure SQL database from before the data loss incident_
+
+I tested whether the restoration was successful by running a query to return everything in the Person.Address table again. I could see that in the top 100 rows, the AddressLine2 column contained null values instead of ‘not_a_real_address.’
+
+<img width="926" alt="m5-2 restore database query" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/ebb47f52-e9e4-48e8-bb59-71a220a381ae">
+
+_Image showing the results of the query on the Person.Address table in the restored database. The AddressLine2 column has been returned to its original state from before the data loss incident_
+
+In order to fully recover from the data corruption, I deleted the original database, retaining just the restored database. Once I deleted the original database which suffered the data loss, I could see that the database resource group now only contained 3 items: the restored database, the database server and the migration service I created when performing the data migration in milestone 3.
+
+<img width="982" alt="m5-2 original deleted" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/7c54f7ae-7c2d-497a-bfab-b6743bc4824d">
+
+_Image showing the contents of the database resource group in Azure. The original corrupted database has been deleted, leaving just the restored database, Azure SQL server and the database migration service_
+
+
 ## Milestone 6: GEO Replication and Failover
 
 ## Milestone 7: Microsoft Entra Directory Integration
