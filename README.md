@@ -298,7 +298,15 @@ In order to fully recover from the data corruption, I deleted the original datab
 _Image showing the contents of the database resource group in Azure. The original corrupted database has been deleted, leaving just the restored database, Azure SQL server and the database migration service_
 
 
-## Milestone 6: GEO Replication and Failover
+## Milestone 6: Geo Replication and Failover
+The aim of milestone 6 was to configre geo-replication of the production database to further protect the database. Geo-replication works by replicating a database to a separate geographic region. The two databases are referred to as 'primary' (original database) and secondary (geo-replicated database). The advantage of geo-replication is that if the primary database was to become unavailable, such as in the case of a regional outage, disaster or planned maintenance, the secondary database can be used instead (referred to as a 'failover').
+
+### Set Up Geo-Replication for Azure SQL Database
+To set up geo-replication for the production database (which was restored from data loss in milestone 5), I navigated to the Azure SQL Database in the Azure portal, entered the Replicas menu and clicked 'Create replica'. 
+
+This opened the Geo Replica wizard where I had to create a new server for the secondary database. I based the server in a different geographic location, East US, to my primary database, UK South. Like with the original server, I used SQL authentication. For the Geo Replica settings, I left them as default.
+
+### Test Failover and Failback
 
 ## Milestone 7: Microsoft Entra Directory Integration
 
