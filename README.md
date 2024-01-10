@@ -219,6 +219,65 @@ _Image showing a successful execution of the weekly back up maintenance plan._
 I confirmed it worked by logging into my Azure account and navigating to the Azure Blob Storage container. I could see a back up file had been created and stored in the container, proving that the issue was now solved.
 
 ## Milestone 5: Disaster Recovery Simulation
+Milestone 5 of the project revolved around disaster recovery. I simulated a disaster by intentionally corrupting some data in the production database (which has now been migrated to Azure). I then recovered from the incident by restoring the database to a point in time before the data loss occurred.
+
+### Mimic Data Loss in the Production Environment
+The first stage in simulating Disaster Recovery was to mimic data loss in the production environment. I connected to the production VM created in Milestone 2 and opened ADS. From there, I connected to the Azure Cloud Database I created in Milestone 3:
+
+<img width="320" alt="m5-1 connected to cloud database" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/0dd16f31-3546-44a6-8515-25b7355f10d0">
+
+_Image showing successful connection of ADS to the Azure Cloud Database created in Milestone 3_
+
+To mimic data corruption, I chose to replace data in one column of the ‘Person.Address’ table with fake values. I examined the data in this table before intentional corruption by running a query to select the top 1000 rows of the 'Person.Address' table. I could see the ‘AddressLine2’ column of the table contained mostly null values.
+
+<img width="483" alt="m5-1 before corruption" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/e80be4b3-2994-4f64-91a7-2a5c1eabdb26">
+
+_Image showing the query I ran to return the top 1000 rows of the Person.Addess table. The image shows the first 5 rows of the result_
+
+I then mimicked data corruption by running a query to set the ‘AddressLine2’ column in the top 100 rows with ‘not_a_real_address’. The query was as follows:
+
+```
+UPDATE TOP (100) Person.Address
+SET AddressLine2 = 'not_a_real_address'
+```
+
+I confirmed the data to be deleted by running a query to select all rows again, expecting the first 100 rows to show ‘not_a_real_address’ in the AddressLine2 column:
+
+<img width="553" alt="m5-1 after corruption" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/6f145f47-9eb0-48b4-9627-02a2ef8713d7">
+
+_Image showing the top 1000 rows of the Person.Address table. The AddressLine2 column now shows 'not_a_real_address' in the top 100 rows_
+
+With this, I had now simulated a data loss incident. Now I needed to recover from the data loss incident.
+
+### Restore Database from Azure SQL Database Backup
+
+In order to perform disaster recovery from the data loss incident, I used the Azure SQL Database Backup feature to restore the production database to a time before the incident occurred. I chose a restore point 24 hours before I corrupted the data:
+
+<img width="611" alt="m5-2 restore database" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/2dd330d4-0153-4f09-a9d5-7857d52e8799">
+
+_Image showing the Restore Database page when choosing to restore an Azure SQL Database_
+
+Once I configured the settings, I clicked 'Review + Create' then Azure began to deploy a new database from the chosen restore point:
+
+<img width="410" alt="m5-2 restore database deploying" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/230a7e6a-5742-4224-b90a-36a891eae707">
+
+_Image showing the restored database being deployed_
+
+#### Problem
+The deployment of this new database was taking a long time. I left Azure to deploy the database overnight and the next day, I saw the deployment had failed. In the Azure portal, I navigated to the resource group I set up for databases and checked the 'Deployments' section to investigate. I could see an error under the deployment name "Microsoft.SQLDatabase.NewDatabaseRestoreExisti...":
+
+![m5-2 restore database  failed](https://github.com/LHMak/azure-database-migration873/assets/147920042/d0fcaf1b-a726-4686-a957-cea119388a95)
+
+_Image showing the list of deployments in the database resource group and the error window for one of the entries_
+
+I tried researching the error but was unable to find anything. As I gain more experience with the Azure platform, I am sure I will understand this issue more in depth.
+
+#### Solution
+I decided to redeploy the restored database and eventually it succeded:
+
+![m5-2 restore database success](https://github.com/LHMak/azure-database-migration873/assets/147920042/7f83ea9b-4535-407f-9db7-e3135edda2c2)
+
+_Image showing successful deployment of the restored database_
 
 ## Milestone 6: GEO Replication and Failover
 
