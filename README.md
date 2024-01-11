@@ -299,14 +299,27 @@ _Image showing the contents of the database resource group in Azure. The origina
 
 
 ## Milestone 6: Geo Replication and Failover
-The aim of milestone 6 was to configre geo-replication of the production database to further protect the database. Geo-replication works by replicating a database to a separate geographic region. The two databases are referred to as 'primary' (original database) and secondary (geo-replicated database). The advantage of geo-replication is that if the primary database was to become unavailable, such as in the case of a regional outage, disaster or planned maintenance, the secondary database can be used instead (referred to as a 'failover').
+The aim of milestone 6 was to configre geo-replication of the production database to further protect the database. Geo-replication works by replicating a database to a separate geographic region. The two databases are referred to as 'primary' (original database) and secondary (geo-replicated database). The advantage of geo-replication is that if the primary database was to become unavailable, such as in the case of a regional outage, disaster or planned maintenance, the secondary database can be used instead (referred to as a 'failover'). When the disaster or event has been resolved, it is possible to switch back to the primary database (referred to as 'failback').
 
 ### Set Up Geo-Replication for Azure SQL Database
 To set up geo-replication for the production database (which was restored from data loss in milestone 5), I navigated to the Azure SQL Database in the Azure portal, entered the Replicas menu and clicked 'Create replica'. 
 
-This opened the Geo Replica wizard where I had to create a new server for the secondary database. I based the server in a different geographic location, East US, to my primary database, UK South. Like with the original server, I used SQL authentication. For the Geo Replica settings, I left them as default.
+This opened the Geo Replica wizard where I had to create a new server for the secondary database. I based the server in a different geographic location, East US, to my primary database, UK South. Like with the original server, I used SQL authentication. For the Geo Replica settings, I left them as default. I then waited for the secondary database to deploy:
+
+![m6-1 database deployed](https://github.com/LHMak/azure-database-migration873/assets/147920042/efe319a9-e821-4484-aebe-66744cddc592)
+
+_Image showing successful deployment of the secondary database_
+
+Looking at the overview of the database, I could see the ‘Replica type’ and ‘Primary database’ fields, indicating the new server was successfully deployed as a geo-replica of the original database:
+
+![m6-1 database overview](https://github.com/LHMak/azure-database-migration873/assets/147920042/aaafb6cf-7c90-452c-9e28-584e02d76d1d)
+
+_Image showing a section of the overview page of the secondary database. It shows the 'Replica type' and 'Primary database' fields_
+
+With geo-replication of the production database now complete, it was time to test the functionality of failing over and failing back.
 
 ### Test Failover and Failback
+To test the functionality of the failover environment (secondary database), I initiated a test failover. 
 
 ## Milestone 7: Microsoft Entra Directory Integration
 
