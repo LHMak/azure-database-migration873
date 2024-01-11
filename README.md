@@ -299,7 +299,9 @@ _Image showing the contents of the database resource group in Azure. The origina
 
 
 ## Milestone 6: Geo Replication and Failover
-The aim of milestone 6 was to configre geo-replication of the production database to further protect the database. Geo-replication works by replicating a database to a separate geographic region. The two databases are referred to as 'primary' (original database) and secondary (geo-replicated database). The advantage of geo-replication is that if the primary database was to become unavailable, such as in the case of a regional outage, disaster or planned maintenance, the secondary database can be used instead (referred to as a 'failover'). When the disaster or event has been resolved, it is possible to switch back to the primary database (referred to as 'failback').
+The aim of milestone 6 was to configre geo-replication of the production database to further protect the database. Geo-replication works by replicating a database to a separate geographic region. The two databases are referred to as 'primary' (original database) and secondary (geo-replicated database).
+
+The advantage of geo-replication is to ensure database availability in case of an issue which would prevent access to the database- such as a disaster or planned maintenance. In these situations, the secondary database can be used instead of the primary database (referred to as 'failover'). When the disaster or event has been resolved, it is possible to switch back to the primary database (referred to as 'failback').
 
 ### Set Up Geo-Replication for Azure SQL Database
 To set up geo-replication for the production database (which was restored from data loss in milestone 5), I navigated to the Azure SQL Database in the Azure portal, entered the Replicas menu and clicked 'Create replica'. 
@@ -319,7 +321,21 @@ _Image showing a section of the overview page of the secondary database. It show
 With geo-replication of the production database now complete, it was time to test the functionality of failing over and failing back.
 
 ### Test Failover and Failback
-To test the functionality of the failover environment (secondary database), I initiated a test failover. In a real-world scenario, I would perform this during a planned maintenance period to avoid loss of data or interruption of work for end users of the database. As this is a personal project, the timing of this test was of no concern.
+To test the functionality of the failover environment (secondary database), I initiated a test failover. In a real-world scenario, this would be performed during a planned maintenance period to avoid loss of data or interruption of work for end users. As this is a personal project, the timing of this test was of no concern.
+
+To test data consistency during the failover, I ran a simple query on the primary database in ADS on the production VM. I could then run the same query on the failover database and compare the results to see if they are consistent.
+
+The query I ran was:
+
+```
+SELECT *
+FROM HumanResources.Department
+```
+Which presented the following result:
+
+<img width="1295" alt="m6-2 query primary" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/17b7afb7-47e2-41bb-b057-7ed53976ecba">
+
+_Image showing the query result of the primary database_
 
 To initiate the failover test, I navigated to the primary server (hosted in UK South). From here, I opened the Failover Groups menu under 'Data Management' and clicked 'Add group,' which opened the 'Failover group' wizard:
 
@@ -339,7 +355,37 @@ To check if failover group was deployed correctly, I navigated to the secondary 
 
 _Image showing the successfully created failover group_
 
-I clicked on the failover group to show its overview page
+I clicked on the failover group to show its overview page and from there, clicked 'Failover' from the task pane. A dialogue box appeared warning that any secondary databases will be switched to the primary role and whether I wanted to continue- I selected 'yes.'
+
+<img width="1092" alt="m6-2 failover group failover button2" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/a58790e1-12b2-42de-bc2b-e90888382f84">
+
+_Image showing the warning which appears when selecting 'Failover' from the task pane of the failover groups overview page_
+
+Once the failover completed, it could be seen from the failover groups overview page that the two servers had switched role- the secondary server now has the Primary role and vice versa. However to avoid confusion, I will continue to refer to the original primary and secondary servers and databases as such:
+
+<img width="1552" alt="m6-2 failover group page switched" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/4e6c1b4b-afc9-4dc6-bb35-2a18f2cf030f">
+
+_Image showing the failover groups overview page. It can be seen that the two servers have now switched roles._
+
+To evaluate the data consistency of the secondary database, I connected to it on ADS with the production VM:
+
+<img width="323" alt="m6-2 failover database connected" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/ea409bff-558b-42f1-97a0-e4f900bb9e3d">
+
+_Image showing active connections to both databases in ADS. The primary database is first and the secondary (failover) database is second_
+
+I ran the query on the HumanResources.Department on the secondary database and compared with the result of the primary database. The results were identical, confirming data consistency of the secondary database.
+
+<img width="1307" alt="m6-2 query failover" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/4f9295a8-0d3b-4574-80a5-6c10baefd1b1">
+
+_Image showing the result of the test query on the failover (secondary, now primary database)_
+
+After confirming the data was consistent between the databases, I performed a failback to revert the primary and secondary servers and databases to their original roles. This was relatively simple- I just clicked 'Failover' again from the failover groups page in the Azure portal. The failback was reflected in the portal:
+
+<img width="798" alt="m6-2 failback" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/6fa1f402-3a41-4545-b0db-08075a93c27f">
+
+_Image showing the results of the failback_
+
+After the failback, it could be seen that the primary server once again had the Primary role and the secondary server also had the Secondary role too.
 
 ## Milestone 7: Microsoft Entra Directory Integration
 
