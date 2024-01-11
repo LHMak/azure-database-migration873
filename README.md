@@ -319,7 +319,27 @@ _Image showing a section of the overview page of the secondary database. It show
 With geo-replication of the production database now complete, it was time to test the functionality of failing over and failing back.
 
 ### Test Failover and Failback
-To test the functionality of the failover environment (secondary database), I initiated a test failover. 
+To test the functionality of the failover environment (secondary database), I initiated a test failover. In a real-world scenario, I would perform this during a planned maintenance period to avoid loss of data or interruption of work for end users of the database. As this is a personal project, the timing of this test was of no concern.
+
+To initiate the failover test, I navigated to the primary server (hosted in UK South). From here, I opened the Failover Groups menu under 'Data Management' and clicked 'Add group,' which opened the 'Failover group' wizard:
+
+![m6-2 failover groups](https://github.com/LHMak/azure-database-migration873/assets/147920042/0ab5a7dd-3740-4e96-a9b8-bd161cc5b5d2)
+
+_Image showing the Failover Groups menu, accessed from the 'Data Management' section of the overview page of the primary server_
+
+I filled in the fields, choosing an identifiable Failover group name and ensuring to select the secondary server in the 'Server' field.
+
+![m6-2 failover group wizard filled](https://github.com/LHMak/azure-database-migration873/assets/147920042/d6bdcd1c-065d-4531-8e4c-2d7d30c4c0f2)
+
+_Image showing the completed Failover group wizard_
+
+To check if failover group was deployed correctly, I navigated to the secondary server in the Azure portal and opened the Failover groups menu. I could see the newly created failover group here, with the primary and secondary server names populating the 'Primary server' and 'Secondary server' columns as expected:
+
+![m6-2 failover group created](https://github.com/LHMak/azure-database-migration873/assets/147920042/dbcffbf9-a7f2-4c8c-9117-0d9f279be335)
+
+_Image showing the successfully created failover group_
+
+I clicked on the failover group to show its overview page
 
 ## Milestone 7: Microsoft Entra Directory Integration
 
