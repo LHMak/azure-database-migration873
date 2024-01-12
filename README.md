@@ -388,6 +388,16 @@ _Image showing the results of the failback_
 After the failback, it could be seen that the primary server once again had the Primary role and the secondary server also had the Secondary role too.
 
 ## Milestone 7: Microsoft Entra Directory Integration
+The purpose of the final milestone of this project was to integrate Microsoft Entra Directory with the production database. This would allow more control over access management and security of the database.
+
+Currently, the database uses SQL Login Authentication- effectively just a username and password combination to manage user access to the database. While simple, the downside of this is that any user has full access and complete administrative access to the database. In a real-life scenario, access would be restricted depending on a user's job responsibilities (e.g. administrative privelages would be given to certain departments or senior staff; database read privelages would be given to other departments or junior staff, etc.). 
+
+Using Microsoft Entra Directory to govern user access would allow more granular control of each user of the database. For example, an admin user can be assigned the `db_owner` role, allowing thhem to make modifications to the database, while another user could be assigned the `db_datareader` which grants just read-only access to the database.
+
+### Configure Microsoft Entra ID for Azure SQL Database
+To begin, I enabled Microsoft Entra ID authentication for the server hosting the production database
+
+### Create DB Reader User
 
 # Tools Used
 - AdventureWorks sample database
