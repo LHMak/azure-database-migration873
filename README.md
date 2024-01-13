@@ -395,8 +395,21 @@ Currently, the database uses SQL Login Authentication- effectively just a userna
 Using Microsoft Entra Directory to govern user access would allow more granular control of each user of the database. For example, an admin user can be assigned the `db_owner` role, allowing thhem to make modifications to the database, while another user could be assigned the `db_datareader` which grants just read-only access to the database.
 
 ### Configure Microsoft Entra ID for Azure SQL Database
-To begin, I enabled Microsoft Entra ID authentication for the server hosting the production database
+To enable Microsoft Entra ID authentication for the server hosting the production database, I first created a Microsoft Entra user who will become the admin.
 
+I created the user by navigating to the Microsoft Entra ID page in the Azure portals and selecting 'Add' > 'User' > 'Create new user' from the task pane:
+
+<img width="502" alt="m7-2 create user" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/5156c7e5-c784-4e1a-b0e1-23d4d305a0b2">
+
+_Image showing the path to create a new user from the Microsoft Entra ID overview page_
+
+I did  this by navigating to the server in the Azure portal and under 'Settings,' opened 'Microsoft Entra ID':
+
+<img width="636" alt="m7-1 Settings" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/bb229460-e918-45de-b983-4d8fd9d36f2b">
+
+_Image showing the Microsoft Entra ID page of Azure SQL server settings_
+
+From clicked 'Set admin' to assign a Microsoft Entra user as the admin of the server. I decided to set my user as the admin. 
 ### Create DB Reader User
 
 # Tools Used
