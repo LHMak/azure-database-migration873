@@ -388,11 +388,11 @@ _Image showing the results of the failback_
 After the failback, it could be seen that the primary server once again had the Primary role and the secondary server also had the Secondary role too.
 
 ## Milestone 7: Microsoft Entra Directory Integration
-The purpose of the final milestone of this project was to integrate Microsoft Entra Directory with the production database. This would allow more control over access management and security of the database.
+The purpose of the final milestone of this project was to integrate Microsoft Entra Directory with the production database. This would allow more control over access management and security of the database. An admin user with full administrative access and another user with read-only access was created.
 
-Currently, the database uses SQL Login Authentication- effectively just a username and password combination to manage user access to the database. While simple, the downside of this is that any user has full access and complete administrative access to the database. In a real-life scenario, access would be restricted depending on a user's job responsibilities (e.g. administrative privelages would be given to certain departments or senior staff; database read privelages would be given to other departments or junior staff, etc.). 
+At this point, the database used SQL Login Authentication- effectively just a username and password combination to manage user access to the database. While simple, the downside of this was that any user had complete administrative access to the database, allowing any user to add, delete and modify data. In a real-life scenario, access would be restricted depending on a user's job responsibilities (e.g. administrative acess would be given to certain departments or senior staff; read-only access would be given to other departments or junior staff, etc.). 
 
-Using Microsoft Entra Directory to govern user access would allow more granular control of each user of the database. For example, an admin user can be assigned the `db_owner` role, allowing thhem to make modifications to the database, while another user could be assigned the `db_datareader` which grants just read-only access to the database.
+Using Microsoft Entra Directory to govern user access would allow more granular control of each user of the database. For example, one user could be set as the Microsoft Entra admin of the database, allowing them to make modifications to the database, while another user could be assigned the `db_datareader` role which grants just read-only access to the database. This other user would therefore be able to look up data, but could not add, update or delete any data.
 
 ### Configure Microsoft Entra ID for Azure SQL Database
 To enable Microsoft Entra ID authentication for the server hosting the production database, I first created a Microsoft Entra user who will become the admin.
@@ -446,6 +446,45 @@ I was then able to successfully connect to the server as the Microsoft Entra adm
 _Image showing a successful connection to the production database as the Microsoft Entra admin user I created_
 
 ### Create DB Reader User
+
+Now that an admin user had been assigned, I created another Microsoft Entra user who would be given the db_datareader role. I created the DB Reader user in the same way as I did the admin, assigning a UPN, display name and password. 
+
+Once the DB Reader user was created, I connected to the production database as the admin again in ADS, right clicked the server and selected 'New Query' from the context menu. In the query editor I ran the following query to grant the db_reader role to the DB Reader user I created:
+
+```
+CREATE USER [DB_Reader@yourdomain.com] FROM EXTERNAL PROVIDER;
+ALTER ROLE db_datareader ADD MEMBER [DB_Reader@yourdomain.com];
+```
+
+I replaced `DB_Reader@yourdomain.com` with the UPN of the the DB Reader user. The query works by first creating a user account for the database and then assigns the db_datareader role to it:
+
+<img width="770" alt="m7-2 create db_reader query" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/fe68f0f2-6095-406f-b809-892d82ef3087">
+
+_Image showing the executed query to create the DB Reader user and assign the db_datareader role to it_
+
+I tested this worked by re-connecting to the server using the credentials of the DB reader user:
+
+<img width="621" alt="m7-2 connecting as reader" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/250ac7e7-bada-4ddc-a189-ae4a506f6d7c">
+
+_Image showing a connection being made to the production database using the DB Reader user_
+
+When connected, I checked the user could read data from the database by executing a query to select the entire `Person.Address` table:
+
+<img width="866" alt="m7-2 db reader read query" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/48247dbb-7fa8-4676-aa1a-035ccbbc03c4">
+
+_Image showing the results of the query when connected as the DB Reader user_
+
+This proved the DB Reader user could read data from the database. Next I tested whether this user could modify data by executing a query to delete rows from the table. If the db_reader role was assigned correctly, the user would not be able to perform this operation:
+
+<img width="1205" alt="m7-2 db reader write query" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/7d0699c4-948d-488f-9ff1-c3063c6d3930">
+
+_Image showing the results of the query to modify the database when connected as the DB Reader user_
+
+As expected, the DB Reader user was unable to execute the query, proving that this user had read-only access to the production database.
+
+## Project Summary
+
+
 
 # Tools Used
 - AdventureWorks sample database
