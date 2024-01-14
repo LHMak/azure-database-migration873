@@ -403,13 +403,48 @@ I created the user by navigating to the Microsoft Entra ID page in the Azure por
 
 _Image showing the path to create a new user from the Microsoft Entra ID overview page_
 
-I did  this by navigating to the server in the Azure portal and under 'Settings,' opened 'Microsoft Entra ID':
+This opened the Create new user wizard, where I chose an identifiable UPN, password and display name.
+
+<img width="502" alt="m7-2 create user 2" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/a4e7a83e-70eb-4498-8eb4-27262bfdedc6">
+
+_Image showing the creation of the Microsoft Entra user who will become the database admin_
+
+With the user created, I needed to assign them administrative privileges to the database. I did  this by navigating to the server in the Azure portal and under 'Settings,' opened 'Microsoft Entra ID':
 
 <img width="636" alt="m7-1 Settings" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/bb229460-e918-45de-b983-4d8fd9d36f2b">
 
 _Image showing the Microsoft Entra ID page of Azure SQL server settings_
 
-From clicked 'Set admin' to assign a Microsoft Entra user as the admin of the server. I decided to set my user as the admin. 
+From there, I clicked 'Set admin' then searched and selected the new user:
+
+<img width="616" alt="m7-2 create user 3" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/76ba34fe-37cd-4795-9140-d01b05d592a6">
+
+_Image showing the new user being selected as the Microsoft Entra admin of the production database server_
+
+I was then redirected to the Microsoft Entra ID settings of the server, where I clicked 'Save' to save the changes:
+
+<img width="430" alt="m7-2 create user 4" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/b3d2269b-d7ea-4085-a7c2-6987fa793e10">
+
+_Image showing the changes being saved to apply the new user as the administrator of the database_
+
+To test whether setting the user as the admin worked, I opened ADS on the production VM. I right-clicked the connection to the production database and then edited the connection:
+
+<img width="395" alt="m7-2 edit connection" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/c8891fe6-7e39-429b-a014-00d8bbfb21e4">
+
+_Image showing the 'Edit Connection' in the context menu when right-clicking the production datbase in ADS_
+
+To connect as the Microsoft Entra admin, I changed the authentication type from SQL Login to Azure Active Directory. The following field was 'Account,' where I selected 'Add account.' I was directed to a login page for Azure, where I proceeded to sign in using the UPN and password I defined earlier for the Microsoft Entra admin. Once I logged in as the Microsoft Entra admin user, I clicked 'Connect' in ADS.
+
+<img width="620" alt="m7-2 edit connection 2" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/8f65fa01-d212-40e9-acee-0b484c9f6a0a">
+
+_Image showing Azure Active Directory option for the authentication type of the connection_
+
+I was then able to successfully connect to the server as the Microsoft Entra admin user:
+
+<img width="326" alt="m7-2 connected as admin" src="https://github.com/LHMak/azure-database-migration873/assets/147920042/92597005-157c-41fd-8730-c2f9368014fb">
+
+_Image showing a successful connection to the production database as the Microsoft Entra admin user I created_
+
 ### Create DB Reader User
 
 # Tools Used
