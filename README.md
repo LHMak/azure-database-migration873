@@ -1,4 +1,5 @@
 # Azure Database Migration
+_Migrates an on-premises database to a cloud-based database system hosted on Microsoft Azure._
 
 # Project Description
 The goal of this project was to migrate a local SQL database to the cloud using an Azure SQL Database. The local database was hosted on an SQL server on a Virutal Machine (VM).
