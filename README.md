@@ -485,7 +485,7 @@ As expected, the DB Reader user was unable to execute the query, proving that th
 This means that Microsoft Entra ID has been fully implemented. An admin user has been established and new user accounts can be created with the relevant permissions they require.
 
 ## Project Summary
-In summary, the goal of this project was to architect and implement a cloud-based database system on Microsoft Azure for a fictional business. The original database hosted on a virtual machine was migrated to an Azure SQL Database. Various disaster recovery measures were implemented to protect against data loss and ensure availability in case of disaster. Finally, database security was enhanced with the integration of Microsoft Entra ID, replacing the relatively insecure SQL Login authentication method which was previously in use.
+In summary, the goal of this project was to architect and implement a cloud-based database system on Microsoft Azure. The original database hosted on a virtual machine was migrated to an Azure SQL Database. Various disaster recovery measures were implemented to protect against data loss and ensure availability in case of disaster. Finally, database security was enhanced with the integration of Microsoft Entra ID, replacing the relatively insecure SQL Login authentication method which was previously in use.
 
 # Tools Used
 - Microsoft's AdventureWorks sample database
@@ -499,8 +499,12 @@ In summary, the goal of this project was to architect and implement a cloud-base
   - Azure SQL Migration
 - Microsoft Azure Blob Storage
 - Microsoft Entra ID
+- Lucidchart
 
 # File Structure of Project
+- **README.md:** The README markdown file for this project. Documents the purpose, methodology, challenges faces, tools used, etc. for the project.
+- **LICENSE:** The License (MIT) file for this project.
+- **Azure Project Diagram.png:** UML diagram of the architecture of the cloud-based database system
 
 # License Information
 This project is licensed under the terms of the MIT license.
