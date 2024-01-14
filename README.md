@@ -5,6 +5,9 @@ The goal of this project was to migrate a local SQL database to the cloud using 
 The AdventureWorks sample database created by Microsoft was used for the purposes of this project.
 This project was split into 7 milestones. After each milestone, any relevant files were uploaded to this repository and this README was updated to document my progress.
 
+The UML showing the complete architecture of the project is shown below:
+![UML diagram showing the architecture of the cloud-based database system built throughout this project.](https://github.com/LHMak/azure-database-migration873/blob/main/Azure%20Project%20Diagram.png?raw=true)
+
 ## Milestone 1: Set up the Environment
 In this milestone, this GitHub repo was created and I set up my account on Azure.
 
